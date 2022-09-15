@@ -18,29 +18,20 @@ def compare_SNR(f_img, l_img):
 
 
 def batch_snr(f_data, l_data):
-    De_data = f_data.data.cpu().numpy()  # 将数据从GPU中拷贝出来，放入CPU中，并转换为numpy数组
+    De_data = f_data.data.cpu().numpy() 
     Clean_data = l_data.data.cpu().numpy()
     SNR = 0
-    De = De_data.squeeze()  # 默认压缩所有为1的维度
+    De = De_data.squeeze()  
     Clean = Clean_data.squeeze()
     SNR += compare_SNR(De, Clean)
     return SNR
 
-# --------------------------------------------
-# SSIM
-# --------------------------------------------
 
-
-"""
-ValueError: win_size exceeds image extent. Either ensure that your images are at least 7x7;
- or pass win_size explicitly in the function call, with an odd value less than or equal 
- 不可用
-"""
 from skimage.metrics import structural_similarity as ssim
 
 
 def compute_ssim(img1, img2):
-    img1 = img1.data.cpu().numpy()  # 将数据从GPU中拷贝出来，放入CPU中，并转换为numpy数组
+    img1 = img1.data.cpu().numpy()  
     img2 = img2.data.cpu().numpy()
     img1 = img1.squeeze()
     img2 = img2.squeeze()
