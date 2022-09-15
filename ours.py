@@ -1,11 +1,6 @@
 import torch
 import torch.nn as nn
 
-"""
-最终版本
-"""
-
-
 class ChannelAttentionModule(nn.Module):
     def __init__(self, channel, ratio=16):
         super(ChannelAttentionModule, self).__init__()
