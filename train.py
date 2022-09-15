@@ -11,22 +11,21 @@ from ssim1 import ssim1
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-net = ResNet(Bottleneck, [3, 4, 6, 3])
+net = Ours()
 net.to(device=device)
 
-epochs = 15
+epochs = 50
 lr = 0.005
-batch_size = 20
+batch_size = 128
 
 optimizer = optim.Adam(net.parameters(), lr)
 criterion = nn.MSELoss()
 
-# 指定特征和标签数据地址，加载数据集
 train_path_x = "D:\\Seismic\\seis_data\\patchs\\feature\\"
 train_path_y = "D:\\Seismic\\seis_data\\patchs\\label\\"
 # train_path_x = "data/feature/"
 # train_path_y = "data//label/"
-# 划分数据集，训练集：验证集：测试集 = 8:1:1
+
 dataset = MyDataset(train_path_x, train_path_y)
 print('Dataset size:', len(dataset))
 valida_size = int(len(dataset) * 0.1)
@@ -139,57 +138,3 @@ with open('save_dir/训练时间.txt', 'w', encoding='utf-8') as f:
     f.close()
 print("训练开始时间{}>>>>>>>>>>>>>>>>训练结束时间{}".format(start_time, end_time))  # 打印所用时间
 
-loss_sets = []
-for sets in temp_sets1:
-    for i in range(2):
-        loss_sets.append(sets[i])
-loss_sets = np.array(loss_sets).reshape(-1, 2)  # 重塑形状10*2，-1表示自动推导
-np.savetxt('save_dir/loss_sets.txt', loss_sets, fmt='%.4f')
-
-snr_sets = []
-for sets in temp_sets2:
-    for i in range(2):
-        snr_sets.append(sets[i])
-snr_sets = np.array(snr_sets).reshape(-1, 2)
-np.savetxt('save_dir/snr_sets.txt', snr_sets, fmt='%.4f')
-
-ssim_sets = []
-for sets in temp_sets3:
-    for i in range(2):
-        ssim_sets.append(sets[i])
-ssim_sets = np.array(ssim_sets).reshape(-1, 2)
-np.savetxt('save_dir/ssim_sets.txt', ssim_sets, fmt='%.4f')
-
-psnr_sets = []
-for sets in temp_sets4:
-    for i in range(2):
-        psnr_sets.append(sets[i])
-psnr_sets = np.array(psnr_sets).reshape(-1, 2)
-np.savetxt('save_dir/psnr_set.txt', psnr_sets, fmt='%.4f')
-
-# 显示snr曲线
-snr_lines = np.loadtxt('save_dir/snr_sets.txt')
-De_before = snr_lines[:, 0]
-De_after = snr_lines[:, 1]
-x2 = range(len(De_before))
-fig2 = plt.figure()
-plt.plot(x2, De_before, x2, De_after)
-plt.xlabel('epoch')
-plt.ylabel('SNR')
-plt.legend(['ques', 'inter'])
-plt.savefig('save_dir/snr_plot.png', bbox_inches='tight')
-plt.tight_layout()
-
-# 显示loss曲线
-loss_lines = np.loadtxt('save_dir/loss_sets.txt')
-train_line = loss_lines[:, 0]
-valida_line = loss_lines[:, 1]
-x1 = range(len(train_line))
-fig1 = plt.figure()
-plt.plot(x1, train_line, x1, valida_line)
-plt.xlabel('epoch')
-plt.ylabel('loss')
-plt.legend(['train', 'valid'])
-plt.savefig('save_dir/loss_plot.png', bbox_inches='tight')
-plt.tight_layout()
-plt.show()
